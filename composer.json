@@ -1,0 +1,19 @@
+{
+    "name": "appcia/bitmask",
+    "description": "Wraps bit mask number in an easily manageable object.",
+    "authors": [
+        {
+            "name": "ciapunek",
+            "email": "ciapunek@gmail.com"
+        }
+    ],
+    "type": "library",
+    "keywords": ["bitmask", "bit", "mask", "options", "bitwise"],
+    "homepage": "http://appcia.pl",
+    "license": "MIT",
+    "require": {
+    },
+    "autoload": {
+        "psr-0": { "Appcia\\BitMask": "src/" }
+    }
+}
