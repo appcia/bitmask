@@ -121,16 +121,19 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     /**
      * Enable or disable multiple options at once
      *
-     * @param mixed   $options
-     * @param boolean $flag
+     * @param mixed   $options Array of options to be affected or true (for all)
+     * @param boolean $flag    Enable / disable specified options
      *
      * @return $this
      */
-    public function apply($options, $flag = TRUE)
+    public function apply($options = null, $flag = TRUE)
     {
-        if (!is_array($options)) {
+        if ($options === true) {
+            $options = array_keys($this->map);
+        } elseif (!is_array($options)) {
             $options = array($options);
         }
+
         foreach ($options as $option) {
             $this->set($option, $flag);
         }
@@ -141,8 +144,8 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     /**
      * Set option by name or integer
      *
-     * @param string|int $option
-     * @param boolean    $flag
+     * @param string|int $option Option
+     * @param boolean    $flag   Enable / disable
      *
      * @return $this
      */

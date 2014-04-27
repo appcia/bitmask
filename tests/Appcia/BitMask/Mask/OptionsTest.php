@@ -46,5 +46,51 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $options->getValue());
     }
+
+    public function testArrayAccess()
+    {
+        $options = new Options(0, array(
+            Options::N0 => 'active',
+            Options::N1 => 'visible',
+            Options::N2 => 'fixed',
+        ));
+
+        $options->apply(true);
+
+        $this->assertTrue($options['active']);
+        $this->assertTrue($options[Options::N0]);
+
+        unset($options['active']);
+        $this->assertFalse($options['active']);
+        $this->assertFalse($options[Options::N0]);
+
+        $this->assertTrue($options['visible']);
+        $options['visible'] = false;
+        $this->assertFalse($options['visible']);
+
+        $this->assertFalse(isset($options['xyz']));
+        $this->assertTrue(isset($options['fixed']));
+    }
+
+    public function testIterable()
+    {
+        $options = new Options(0, array(
+            Options::N0 => 'active',
+            Options::N1 => 'visible',
+            Options::N2 => 'fixed',
+        ));
+
+        foreach ($options as $option => $flag) {
+            $this->assertSame(false, $flag);
+            $this->assertSame($flag, $options->is($option));
+        }
+
+        $options->apply(true);
+
+        foreach ($options as $option => $flag) {
+            $this->assertSame(true, $flag);
+            $this->assertSame($flag, $options->is($option));
+        }
+    }
 }
  
