@@ -282,6 +282,8 @@ class Mask implements \Serializable, \Countable
             $this->setBin($value);
         } elseif (is_numeric($value)) {
             $this->setValue($value);
+        } elseif (is_null($value)) {
+            $this->setValue(0);
         } else {
             throw new \InvalidArgumentException(sprintf(
                 "Mask value to be pushed has invalid type: '%s'.",

@@ -22,7 +22,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      * @param mixed $value
      * @param array $map
      */
-    public function __construct($value = 0, array $map = array())
+    public function __construct($value = null, array $map = array())
     {
         parent::__construct();
 
@@ -33,7 +33,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     /**
      * Factory method (useful when chained)
      *
-     * @param mixed   $value
+     * @param mixed $value
      * @param array $map
      *
      * @return static
@@ -41,6 +41,26 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     public static function factory($value = 0, array $map = array())
     {
         return new static($value, $map);
+    }
+
+    /**
+     * Wrap mask options, attach value change listener and push value at once
+     * Most commonly used combination
+     *
+     * @param object $model ORM model with magic getter / setters
+     * @param string $prop  ORM property name
+     * @param mixed  $value Mask value to be applied
+     * @param array  $map   Possible mask options
+     *
+     * @return $this
+     */
+    public static function wrap($model, $prop, $value = null, array $map = array())
+    {
+        return static::factory($model->{$prop}, $map)
+            ->listen(function (self $options) use ($model, $prop) {
+                $model->{$prop} = $options->getValue();
+            })
+            ->act($value);
     }
 
     /**
@@ -54,7 +74,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     {
         $values = array();
         foreach ($this->map as $option => $value) {
-            $key = $bits ? $option: $value;
+            $key = $bits ? $option : $value;
             $values[$key] = $this->is($option);
         }
 
@@ -85,10 +105,10 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      */
     public function map($name)
     {
-        $option = NULL;
+        $option = null;
         if (is_string($name)) {
             $option = array_search($name, $this->map);
-            if ($option === FALSE) {
+            if ($option === false) {
                 throw new \OutOfBoundsException(sprintf("Mask option by name '%s' not found.", $name));
             }
         } else {
@@ -126,7 +146,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      *
      * @return $this
      */
-    public function apply($options = null, $flag = TRUE)
+    public function apply($options = null, $flag = true)
     {
         if ($options === true) {
             $options = array_keys($this->map);
@@ -237,7 +257,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      */
     public function offsetUnset($option)
     {
-        $this->set($option, FALSE);
+        $this->set($option, false);
     }
 
     /**
@@ -257,7 +277,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
             'map' => $this->map,
             'value' => $this->value,
         );
-        
+
         return serialize($$data);
     }
 
@@ -267,7 +287,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     public function unserialize($serialized)
     {
         $data = unserialize($serialized);
-        
+
         if (isset($data['map'])) {
             $this->map = $data['map'];
         }
