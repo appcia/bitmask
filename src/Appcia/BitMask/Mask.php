@@ -278,7 +278,7 @@ class Mask implements \Serializable, \Countable
             $value = $value->getValue();
         }
 
-        if (is_string($value)) {
+        if (static::isBin($value)) {
             $this->setBin($value);
         } elseif (is_numeric($value)) {
             $this->setValue($value);
@@ -329,6 +329,18 @@ class Mask implements \Serializable, \Countable
         $this->push($value);
 
         return $this;
+    }
+
+    /**
+     * Check if value is binary string
+     *
+     * @param mixed $bin
+     *
+     * @return int
+     */
+    public static function isBin($bin)
+    {
+        return preg_match('/^[01]+$/', $bin);
     }
 
     /**
