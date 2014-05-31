@@ -3,6 +3,7 @@
 namespace Appcia\BitMask\Mask;
 
 use Appcia\BitMask\Mask;
+use Appcia\Utils\Arrays;
 
 /**
  * Bit mask with named options
@@ -88,6 +89,42 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
         }
 
         return $values;
+    }
+
+    /**
+     * Filter options by state
+     *
+     * @param bool $flag  State
+     * @param bool $names Option as name
+     *
+     * @return array
+     */
+    public function filter($flag = true, $names = true)
+    {
+        $values = array();
+        foreach ($this->map as $key => $option) {
+            if ($flag != $this->is($option)) {
+                continue;
+            }
+
+            $values[] = !$names
+                ? $key
+                : $option;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Clear all options
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->setValue(0);
+
+        return $this;
     }
 
     /**
@@ -192,9 +229,14 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      */
     public function push($value)
     {
-        if (is_array($value)) {
-            $this->setAll($value);
-        } else {
+        if (Arrays::isArray($value)) {
+            if (Arrays::isAssoc($value)) {
+                $this->setAll($value);
+            } else {
+                $this->clear()->apply($value);
+            }
+        }
+        else {
             parent::push($value);
         }
 
