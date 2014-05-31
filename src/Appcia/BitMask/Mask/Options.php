@@ -17,6 +17,13 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     protected $map;
 
     /**
+     * Wrapped property
+     *
+     * @var string|null
+     */
+    protected $prop;
+
+    /**
      * Constructor
      *
      * @param mixed $value
@@ -56,11 +63,13 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
      */
     public static function wrap($model, $prop, $value = null, array $map = array())
     {
-        return static::factory($model->{$prop}, $map)
+        $options = static::factory($model->{$prop}, $map)
             ->listen(function (self $options) use ($model, $prop) {
                 $model->{$prop} = $options->getValue();
-            })
-            ->act($value);
+            });
+        $options->prop = $prop;
+
+        return $options->act($value);
     }
 
     /**
@@ -214,6 +223,16 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
         $this->map = $options;
 
         return $this;
+    }
+
+    /**
+     * Get wrapped property
+     *
+     * @return null|string
+     */
+    public function getProp()
+    {
+        return $this->prop;
     }
 
     /**
