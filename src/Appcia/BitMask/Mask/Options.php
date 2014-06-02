@@ -322,6 +322,22 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * @see is()
+     */
+    public function __get($property)
+    {
+        return $this->is($property);
+    }
+
+    /**
+     * @see set()
+     */
+    public function __set($property, $value)
+    {
+        $this->set($property, $value);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getIterator()
