@@ -355,7 +355,7 @@ class Options extends Mask implements \ArrayAccess, \IteratorAggregate
             'value' => $this->value,
         );
 
-        return serialize($$data);
+        return serialize($data);
     }
 
     /**
